@@ -7,12 +7,10 @@ let
     sha256 = "1gzfrpjnr1bz9zljsyg3a4zrhk8r927sz761mrgcg56dwinkhpjk";
   }) { };
 
-  fla-src = import (builtins.fetchTarball {
+  fla = pkgs.agdaPackages.callPackage (import (builtins.fetchTarball {
     url =
       "https://github.com/ryanorendorff/functional-linear-algebra/archive/master.tar.gz";
     sha256 = "1l0549iv8ksxyz5fh9nm0m1cf2qbvj2515c0cv7dxpky6k61i36y";
-  });
-
-  fla = pkgs.agdaPackages.callPackage fla-src { };
+  })) { };
 
 in pkgs.agdaPackages.callPackage ./default.nix { inherit fla; }
