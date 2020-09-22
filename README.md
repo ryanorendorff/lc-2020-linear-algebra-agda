@@ -1,7 +1,7 @@
 Formalizing Linear Algebra Algorithms using Dependently Typed Functional Programming
 ====================================================================================
 
-![Presentation Type Checks](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/Presentation%20Type%20Checks/badge.svg)
+[![Presentation Type Checks](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/Presentation%20Type%20Checks/badge.svg)][agda-literate-mode]
 
 This is a presentation about the Agda library
 [functional-linear-algebra][FLA], which formalizes the matrix-free
@@ -48,6 +48,7 @@ documentation for its Agda mode is [here][spacemacs-agda-mode].
 <!-- References -->
 
 [FLA]: https://github.com/ryanorendorff/functional-linear-algebra
+[agda-literate-mode]: https://agda.readthedocs.io/en/v2.6.1.1/tools/literate-programming.html
 [nix]: https://nixos.org
 [agda-emacs-mode]: https://agda.readthedocs.io/en/v2.6.1.1/tools/emacs-mode.html
 [spacemacs]: https://www.spacemacs.org/
