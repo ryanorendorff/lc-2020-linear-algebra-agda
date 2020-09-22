@@ -3,7 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim,emacs,latex,agda
 
 ### Ignore build file ###
-FunctionalPresentation.pdf
+FormalizingLinearAlgebraAlgorithms.pdf
 
 ### Nix ###
 result

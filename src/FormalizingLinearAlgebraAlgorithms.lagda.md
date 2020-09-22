@@ -44,7 +44,7 @@ open import FLA.Algebra.LinearAlgebra.Matrix hiding (_*ᴹ_; _ᵀ)
 open import FLA.Algebra.LinearAlgebra.Properties.Matrix
 open import FLA.Data.Vec.Properties
 
-module FunctionalPresentation where
+module FormalizingLinearAlgebraAlgorithms where
 
 variable
   A B C : Set
