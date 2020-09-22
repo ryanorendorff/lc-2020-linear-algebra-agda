@@ -1,0 +1,5 @@
+name: lc-2020
+depend:
+  standard-library
+  functional-linear-algebra
+include: src
