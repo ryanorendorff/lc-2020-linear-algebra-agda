@@ -1,7 +1,7 @@
 Formalizing Linear Algebra Algorithms using Dependently Typed Functional Programming
 ====================================================================================
 
-![Presentation Type Checks](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/presentation-type-checks/badge.svg)
+![Presentation Type Checks](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/Presentation%20Type%20Checks/badge.svg)
 
 Abstract
 --------
