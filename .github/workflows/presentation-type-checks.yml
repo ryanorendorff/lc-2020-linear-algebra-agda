@@ -1,4 +1,4 @@
-name: "presentation-type-checks"
+name: "Presentation Type Checks"
 on:
   pull_request:
   push:
