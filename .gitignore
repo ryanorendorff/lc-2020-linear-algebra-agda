@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vim,emacs,latex,agda
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim,emacs,latex,agda
 
+### Ignore build file ###
+FunctionalPresentation.pdf
+
 ### Nix ###
 result
 
