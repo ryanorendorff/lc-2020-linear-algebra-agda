@@ -1265,9 +1265,8 @@ We can prove that `step` and `step'` are the same by saying that when we
 apply the same inputs to `step` and `step'`, we get the same result.[^4]
 
 ```agda
-proof :  ⦃ F : Field A ⦄
-      → (γ : A) → (M : Mat m × n)
-      → (y : Vec A m) → (x : Vec A n)
+proof :  ⦃ F : Field A ⦄ → (γ : A)
+      → (M : Mat m × n) → (y : Vec A m) → (x : Vec A n)
       → step γ M y x ≡ step' γ M y x
 proof γ M y x = begin
   x -ⱽ γ ∘ⱽ (M ᵀ · (M · x -ⱽ y))
@@ -1278,8 +1277,7 @@ proof γ M y x = begin
 ```agda
   -- M-distr--ⱽ : M (x -ⱽ y) ≡ M x -ⱽ M y
   ≡⟨ cong (λ z → x -ⱽ γ ∘ⱽ z) (M-distr--ⱽ (M ᵀ) (M · x) y) ⟩
-  x -ⱽ γ ∘ⱽ (M ᵀ · M · x -ⱽ M ᵀ · y)
-  ∎
+  x -ⱽ γ ∘ⱽ (M ᵀ · M · x -ⱽ M ᵀ · y) ∎
 ```
 
 [^4]: Proving that `step` and `step'` are the same is an extensional
