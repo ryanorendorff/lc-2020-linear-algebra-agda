@@ -18,8 +18,8 @@ header-includes: |
 ---
 
 
-Goal: correct by construction matrices
---------------------------------------
+Goal of the talk: correct by construction matrices
+--------------------------------------------------
 
 <!--
 These comment blocks let me hide stuff! :-D I have to put this top one under
@@ -93,7 +93,7 @@ For this talk, we will mostly be using Agda syntax ("Haskell-like").
 First step: define a type for a matrix
 --------------------------------------
 
-A matrix can be seen as a table of numbers, which we could encode as follows
+A matrix can be seen as a table of numbers, which we could encode as
 
 ```agda
 data MatrixOfNumbers (A : Set) : Set where
@@ -122,7 +122,7 @@ class MatrixOfNumbers(Generic[A])
 First step: define a type for a matrix
 --------------------------------------
 
-A matrix can be seen as a table of numbers, which we could encode as follows
+A matrix can be seen as a table of numbers, which we could encode as
 
 ~~~agda
 data MatrixOfNumbers (A : Set) : Set where
@@ -427,8 +427,8 @@ where `replicate` creates a list of 1s and `*ⱽ` multiplies each element in
 two vectors together.
 
 
-Maybe we can encode too much in this definition
------------------------------------------------
+Is `FunctionalMatrixWithTranspose` "correct by construction"?
+-------------------------------------------------------------
 
 <!--
 ```agda
@@ -437,7 +437,13 @@ postulate
 ```
 -->
 
-Our current formulation allows us to encode the following matrix.
+Our original goal was
+
+> Correct by construction linear algebra
+
+Is this true for `FunctionalMatrixWithTranspose`?
+
+. . .
 
 ```agda
 f₁ : List ℕ → List ℕ
@@ -453,6 +459,7 @@ Hmm, intuition check: can we write `Mᵣ` as a matrix of numbers?
 
 . . .
 
+\undovspacepause
 $$
 m_r = \begin{bmatrix} \vcdice{1} & \vcdice{2} \\ \vcdice{3} & \vcdice{4} \end{bmatrix}
 $$
@@ -492,8 +499,7 @@ muddled in most dependently typed languages.
 Use functions on Vec to ensure that the shapes match
 ----------------------------------------------------
 
-Now we can make a matrix type where the length of the inputs always match
-up.
+We can define a matrix type where the shapes are preserved.
 
 ```agda
 data SizedMatrix (A : Set) (m n : ℕ) : Set where
@@ -520,8 +526,7 @@ data SizedMatrix (A :: *) (m :: Nat) (n :: Nat) where
 Use functions on Vec to ensure that the shapes match
 ----------------------------------------------------
 
-Now we can make a matrix type where the length of the inputs always match
-up.
+We can define a matrix type where the shapes are preserved.
 
 ~~~agda
 data SizedMatrix (A : Set) (m n : ℕ) : Set where
@@ -547,6 +552,12 @@ Mᵢ,ₛ = ConstructSizedMatrix id id -- id : Vec A n → Vec A n
 Intuition check: can we encode matrices that are not possible to write out?
 ---------------------------------------------------------------------------
 
+Our original goal was
+
+> Correct by construction linear algebra
+
+. . .
+
 We could write a matrix for handling playing cards.
 
 ```agda
@@ -564,6 +575,8 @@ M♠ = ConstructSizedMatrix (λ v → replicate ♠) (λ v → replicate ♥)
 
 If we wanted to convert this to multiplication and addition only....
 
+\undovspacepause
+\undovspacepause
 $$
 M♠ = \begin{bmatrix}
 \clubsuit & \heartsuit \\
@@ -653,7 +666,7 @@ Mₛᶠᵢ = ConstructSizedFieldMatrix id id
 ```
 . . .
 
-Are we missing anything else?
+Are we missing anything else to be "correct by construction"?
 
 
 Matrices are linear functions
@@ -671,7 +684,7 @@ Matrices have the following properties that we'd like to preserve:
 
 Currently we could define a matrix like so, which has neither property.
 
-```
+```agda
 _ : ⦃ F : Field A ⦄ → SizedFieldMatrix A n n
 _ = ConstructSizedFieldMatrix (λ v → replicate 1ᶠ) (λ v → replicate 1ᶠ)
 ```
@@ -978,7 +991,7 @@ id-linear = ConstructLinearMatrix idₗ idₗ
 
 . . .
 
-Is there anything else we can make an error on when constructing a matrix?
+Have we reached "Correct by construction linear algebra"?
 
 
 Does the transpose match?
@@ -1026,11 +1039,11 @@ $$
 $$
 
 
-The final version of a functional matrix type
----------------------------------------------
+Finally we reach our goal!
+--------------------------
 
 If we require the user to prove the inner product property, we can _finally_
-create a safe matrix type.
+create a "correct by construction" functional matrix.
 
 ~~~agda
 data Mat_×_ {A : Set} ⦃ F : Field A ⦄ (m n : ℕ) : Set where
@@ -1104,7 +1117,7 @@ x -ⱽ y = x +ⱽ (map (-_) y)
 infixl 6 _-ⱽ_
 
 iterate : ℕ → A → (A → A) → List A
-iterate 0 x f = f x ∷ []
+iterate 0 x f = x ∷ []
 iterate (suc n) x f = x ∷ iterate n (f x) f
 
 _·_ = _·ᴹₗ_
@@ -1219,8 +1232,8 @@ We have gained some nice benefits by moving to a proven type constructor.
 
 ::: incremental
 
-- We can define performant functional version of matrix algebra
-- We can guarantee that our implementation is correct
+- We can define a performant, functional version of matrix algebra.
+- We can guarantee that our implementation is correct.
 - We can use equational reasoning to prove two implementations are equivalent.
 
 :::
@@ -1240,16 +1253,30 @@ Algorithms using Linear Algebra
 ===============================
 
 
+Magnetic Particle Imaging can be modeled using linear algebra
+-------------------------------------------------------------
+
+In MPI, we are attempting to detect where iron is within a sample.
+
+\undovspacepause
+- $v$\ : the voltages coming off of the device.
+- $f_e$\ : the distribution of iron.
+- $M$\ : a _function_ that converts iron distributions into voltages.
+
+![](fig/mpi.png)
+
+
 Solving linear equations finds what input produces an observed result
 ---------------------------------------------------------------------
 
-Say we want to determine how strong some base factors ($x = [\textrm{age},
-\textrm{height}, \cdots]$) contribute to how badly COVID-19 affects a patient
-($y$, list of patients), given a model of the disease $M$.
+We can write this process of converting iron distributions to voltages as
 
 $$
-M x = y
+M f_e = v
 $$
+
+If we have the voltages $v$ coming off the device, we want to find the iron
+distribution $f_e$ that produced that signal.
 
 . . .
 
@@ -1257,7 +1284,7 @@ To solve this problem, we want to compare how good our estimate of the input
 $x$ is at producing the observed output $y$ using the following function.
 
 $$
-J(x) = x^T M^T M x - 2 x M^T y
+J(f_e) = f_e^T M^T M f_e - 2 f_e M^T v
 $$
 
 
@@ -1269,8 +1296,8 @@ _in the direction of steepest descent $\nabla J$_.
 
 $$
 \begin{aligned}
-x_{i+1} & = x_{i} - \gamma (\nabla J)(x_{i}) \\
-x_{i+1} & = x_{i} - \gamma (M^T (M x - y))
+f_{e,i+1} & = f_{e,i} - \alpha \nabla J (f_{e,i}) \\
+f_{e,i+1} & = f_{e,i} - \alpha (M^T (M f_{e,i} - v))
 \end{aligned}
 $$
 
@@ -1280,9 +1307,9 @@ We can implement this in Agda as
 
 ```agda
 step :  ⦃ F : Field A ⦄
-     → (γ : A) → (M : Mat m × n)
-     → (y : Vec A m) → (x : Vec A n) → Vec A n
-step γ M y x = x -ⱽ γ ∘ⱽ (M ᵀ · (M · x -ⱽ y))
+     → (α : A) → (M : Mat m × n)
+     → (v : Vec A m) → (fₑ : Vec A n) → Vec A n
+step α M v = λ fₑ → fₑ -ⱽ α ∘ⱽ (M ᵀ · (M · fₑ -ⱽ v))
 ```
 <!--
 ```agda
@@ -1299,12 +1326,14 @@ From there, we can find the value of $x$ that best matches $y$ by iterating.
 ```agda
 gradient-descent :  ⦃ F : Field A ⦄
                  → (n : ℕ)         -- Number of iterations to run
-                 → (γ : A)         -- Scale factor
+                 → (α : A)         -- Scale factor
                  → (M : Mat m × n) -- Model of system
-                 → (y : Vec A m)   -- Data
-                 → (x : Vec A n)   -- Initial estimate
+                 → (v : Vec A m)   -- Data
+                 → (fₑ : Vec A n)  -- Initial estimate
                  → List (Vec A n)  -- Results (farther is better)
-gradient-descent n γ M y x = iterate n x (step γ M y)
+gradient-descent n α M v fₑ = iterate n fₑ (step α M v)
+
+-- iterate _ x f = [x, f x, f (f x), ... ]
 ```
 
 <!--
@@ -1314,13 +1343,14 @@ postulate
 ```
 -->
 
-Alternative form of step
-------------------------
+
+We cna define equivalent forms of a linear equation
+---------------------------------------------------
 
 We had defined our step function as
 
 ~~~agda
-step γ M y x = x -ⱽ γ ∘ⱽ (M ᵀ · (M · x -ⱽ y))
+step α M v fₑ = fₑ -ⱽ α ∘ⱽ (M ᵀ · (M · fₑ -ⱽ v))
 ~~~
 
 is there another way to write this function?
@@ -1331,9 +1361,9 @@ yes!
 
 ```agda
 step' :  ⦃ F : Field A ⦄
-      → (γ : A) → (M : Mat m × n)
-      → (y : Vec A m) → (x : Vec A n) → Vec A n
-step' γ M y x = x -ⱽ γ ∘ⱽ (M ᵀ · M · x -ⱽ M ᵀ · y)
+      → (α : A) → (M : Mat m × n)
+      → (v : Vec A m) → (fₑ : Vec A n) → Vec A n
+step' α M v fₑ = fₑ -ⱽ α ∘ⱽ (M ᵀ · M · fₑ -ⱽ M ᵀ · v)
 ```
 
 
@@ -1344,19 +1374,19 @@ We can prove that `step` and `step'` are the same by saying that when we
 apply the same inputs to `step` and `step'`, we get the same result.[^4]
 
 ```agda
-proof :  ⦃ F : Field A ⦄ → (γ : A)
-      → (M : Mat m × n) → (y : Vec A m) → (x : Vec A n)
-      → step γ M y x ≡ step' γ M y x
-proof γ M y x = begin
-  x -ⱽ γ ∘ⱽ (M ᵀ · (M · x -ⱽ y))
+proof :  ⦃ F : Field A ⦄ → (α : A)
+      → (M : Mat m × n) → (v : Vec A m) → (fₑ : Vec A n)
+      → step α M v fₑ ≡ step' α M v fₑ
+proof α M v fₑ = begin
+  fₑ -ⱽ α ∘ⱽ (M ᵀ · (M · fₑ -ⱽ v))
 ```
 
 . . .
 
 ```agda
-  -- M-distr--ⱽ : M (x -ⱽ y) ≡ M x -ⱽ M y
-  ≡⟨ cong (λ z → x -ⱽ γ ∘ⱽ z) (M-distr--ⱽ (M ᵀ) (M · x) y) ⟩
-  x -ⱽ γ ∘ⱽ (M ᵀ · M · x -ⱽ M ᵀ · y) ∎
+  -- M-distr--ⱽ : M (fₑ -ⱽ v) ≡ M fₑ -ⱽ M v
+  ≡⟨ cong (λ z → fₑ -ⱽ α ∘ⱽ z) (M-distr--ⱽ (M ᵀ) (M · fₑ) v) ⟩
+  fₑ -ⱽ α ∘ⱽ (M ᵀ · M · fₑ -ⱽ M ᵀ · v) ∎
 ```
 
 [^4]: Proving that `step` and `step'` are the same is an extensional
@@ -1403,8 +1433,8 @@ matrices as functions.
 API comparison: how likely am I to use this?
 --------------------------------------------
 
-Not every library is a blast to use. How do the three data types we have
-compare?
+Not every library is a blast to use. How do these three functional
+approaches stack up?
 
 ![](fig/api-base.pdf)
 
@@ -1412,8 +1442,8 @@ compare?
 API comparison: how likely am I to use this?
 --------------------------------------------
 
-Not every library is a blast to use. How do the three data types we have
-compare?
+Not every library is a blast to use. How do these three functional
+approaches stack up?
 
 ![](fig/api-function.pdf)
 
@@ -1421,8 +1451,8 @@ compare?
 API comparison: how likely am I to use this?
 --------------------------------------------
 
-Not every library is a blast to use. How do the three data types we have
-compare?
+Not every library is a blast to use. How do these three functional
+approaches stack up?
 
 ![](fig/api-sized.pdf)
 
@@ -1430,8 +1460,8 @@ compare?
 API comparison: how likely am I to use this?
 --------------------------------------------
 
-Not every library is a blast to use. How do the three data types we have
-compare?
+Not every library is a blast to use. How do these three functional
+approaches stack up?
 
 ![](fig/api-linear.pdf)
 
@@ -1454,6 +1484,8 @@ Questions?
 ----------
 
 Thanks for listening to my talk!
+
+[github.com/ryanorendorff/lc-2020-linear-algebra-agda](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda)
 
 ![](fig/question.jpg){width=50%}
 
