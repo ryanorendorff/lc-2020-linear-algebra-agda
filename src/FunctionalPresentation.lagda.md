@@ -14,6 +14,7 @@ header-includes: |
   \setmonofont[Contextuals={Alternate}]{PragmataPro Liga}
   \usepackage{epsdice}
   \newcommand\vcdice[1]{\vcenter{\hbox{\epsdice{#1}}}}
+  \newcommand{\undovspacepause}{\vspace*{-0.9em}}
 ---
 
 
@@ -23,7 +24,6 @@ Goal: Correct by construction linear algebra
 <!--
 These comment blocks let me hide stuff! :-D I have to put this top one under
 a slide header to prevent an empty slide.
-
 
 ```agda
 open import Relation.Binary.PropositionalEquality hiding ([_])
@@ -57,7 +57,6 @@ pattern [_,_,_] x y z = x ∷ y ∷ z ∷ []
 pattern [_,_]ⱽ y z = y ∷ⱽ z ∷ⱽ []ⱽ
 pattern [_,_,_]ⱽ x y z = x ∷ⱽ y ∷ⱽ z ∷ⱽ []ⱽ
 ```
-
 -->
 
 We want to be able to enforce that a user cannot create an incorrect matrix,
@@ -141,7 +140,6 @@ $$
 we would write
 
 ```agda
-
 Mₙ : MatrixOfNumbers ℕ -- Natural numbers
 Mₙ = ConstructMatrixOfNumbers [ [ 1 , 2 , 3 ] , [ 4 , 5 , 6 ] ]
 ```
@@ -154,9 +152,9 @@ We can do a few things with a matrix:
 
 ::: incremental
 
-1. Multiply the matrix with a vector (matrix-vector multiply): $Mx$
-2. Transform the matrix to get a new matrix (tranpose): $M^Tx$
-3. Combine the matrix with other matrices (matrix-matrix multiply): $M_1 * M_2$
+1. Multiply a matrix with a vector (matrix-vector multiply): $Mx$
+2. Transform a matrix to get a new matrix (transpose): $M^Tx$
+3. Combine a matrix with other matrices (matrix-matrix multiply): $M_1 * M_2$
 
 :::
 
@@ -165,14 +163,24 @@ What is matrix-vector multiplication?
 -------------------------------------
 
 The matrix-vector multiply transforms one vector into another through
-multiplcation and addition.
+multiplication and addition.
 
 $$
 \begin{array}{c@{ }c@{ }c@{ }c@{ }c@{ }c@{ }c}
 \begin{bmatrix}
 1 & 2 & 3\\
 4 & 5 & 6
-\end{bmatrix} & * & \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} & = & \begin{bmatrix} (1 * 1) + (2 * 2) + (3 * 3) \\ (4 * 1) + (5 * 2) + (6 * 3)  \end{bmatrix} & = & \begin{bmatrix} 14 \\ 32  \end{bmatrix}  \\
+\end{bmatrix} & * &
+\begin{bmatrix}
+1 \\ 2 \\ 3
+\end{bmatrix} & = &
+\begin{bmatrix}
+(1 * 1) + (2 * 2) + (3 * 3) \\
+(4 * 1) + (5 * 2) + (6 * 3)
+\end{bmatrix} & = &
+\begin{bmatrix} 14 \\ 32
+\end{bmatrix}
+\\
 M & * & x & = & & & y
 \end{array}
 $$
@@ -212,7 +220,7 @@ list-identity l = l
 Example of a matrix as a function: diag
 ---------------------------------------
 
-The diagonal matrix pointwise multiplies one vector with another (written as
+The diagonal matrix point-wise multiplies one vector with another (written as
 $*^V$).
 
 $$
@@ -281,7 +289,6 @@ We have matrix-vector multiply down, can we do more?
 
 With our functional definition of a matrix, we can do other operations like
 matrix-matrix multiply.
-
 
 ```agda
 apply_two_matrices : FunctionalMatrix A → FunctionalMatrix A
@@ -353,6 +360,7 @@ Matrix-free methods enable significant time and space savings
 We get a sizeable improvement in image reconstruction performance using a
 matrix-free method.
 
+<!--
 ```python
 @dataclass
 class Matrix:
@@ -361,6 +369,7 @@ class Matrix:
 
 # And associated operators for matrix multiply, addition, etc.
 ```
+-->
 
 . . .
 
@@ -380,15 +389,19 @@ addition.
 
 For example our original identity function
 
-    identity' : List A → List A
-    identity' v = v
+~~~agda
+identity' : List A → List A
+identity' v = v
+~~~
 
 . . .
 
 Could be written as
 
-    identity' : List A → List A
-    identity' v = replicate (len v) 1 *ⱽ v
+~~~agda
+identity' : List A → List A
+identity' v = replicate (len v) 1 *ⱽ v
+~~~
 
 where `replicate` creates a list of 1s and `*ⱽ` multiplies each element in
 two vectors together.
@@ -407,7 +420,6 @@ postulate
 Our current formulation allows us to encode the following matrix.
 
 ```agda
-
 f₁ : List ℕ → List ℕ
 f₁ v = randomlySizedNewList v
 
@@ -453,8 +465,8 @@ v₂ = v
 
 `Vec` is a _dependent type_ because its type _depends on a value_.
 
-[^1]: This is a bit of a misnomer; there is no difference between types and
-terms in most dependently typed languages.
+[^1]: This is a bit of a misnomer; the difference between term and type is
+muddled in most dependently typed languages.
 
 
 Use functions on Vec to ensure that the shapes of the data match
@@ -481,6 +493,7 @@ data SizedMatrix (A :: *) (m :: Nat) (n :: Nat) where
                          -> (Vec A m → Vec A n) -- Transpose function
                          -> SizedMatrix A m n
 ```
+
 
 Use functions on Vec to ensure that the shapes of the data match
 ----------------------------------------------------------------
@@ -530,7 +543,10 @@ M♠ = ConstructSizedMatrix (λ v → replicate ♠) (λ v → replicate ♥)
 If we wanted to convert this to multiplication and addition only....
 
 $$
-M♠ = \begin{bmatrix} \clubsuit & \heartsuit \\ \spadesuit & \diamondsuit \end{bmatrix}
+M♠ = \begin{bmatrix}
+\clubsuit & \heartsuit \\
+\spadesuit & \diamondsuit
+\end{bmatrix}
 $$
 
 Matrices cannot contain just anything! The elements have to be able to be
@@ -566,7 +582,6 @@ record Field (A : Set) : Set where
     0ᶠ  : A -- Identity of _+_, 4 + 0ᶠ = 4
     1ᶠ  : A -- Identity of _*_, 4 * 1ᶠ = 4
 ~~~
-
 
 
 Matrices that operate on fields only
@@ -625,11 +640,11 @@ _ = ConstructSizedFieldMatrix (λ v → replicate 1ᶠ) (λ v → replicate 1ᶠ
 
 . . .
 
-- Linearity : $f(u +^V v) = 1 \neq f(u) +^V f(v) = 1 +^V 1 = 2$
+- Linearity : $f(u +^V v) = 1 \ \ \neq \ \ f(u) +^V f(v) = 1 +^V 1 = 2$
 
 . . .
 
-- Homogeneity : $f(c \circ^V v) = 1 \neq c \circ^V f(v) = c \circ^V 1 = c$
+- Homogeneity : $f(c \circ^V v) = 1 \ \ \neq \ \ c \circ^V f(v) = c \circ^V 1 = c$
 
 
 How do we ensure that our functions are linear?
@@ -647,12 +662,14 @@ record _⊸_ {A : Set} ⦃ F : Field A ⦄ (m n : ℕ) : Set where
 
 . . .
 
+\undovspacepause
 ~~~agda
     f[u+v]≡f[u]+f[v] : (u v : Vec A m) → f (u +ⱽ v) ≡ f u +ⱽ f v
 ~~~
 
 . . .
 
+\undovspacepause
 ~~~agda
     f[c*v]≡c*f[v] : (c : A) → (v : Vec A m) → f (c ∘ⱽ v) ≡ c ∘ⱽ (f v)
 ~~~
@@ -697,7 +714,7 @@ we can note two things
 Demonstrating equality on natural numbers
 -----------------------------------------
 
-For example, if we have the datatype for natural numbers
+For example, if we have the data type for natural numbers
 
 ~~~agda
 data ℕ where
@@ -753,6 +770,7 @@ properties.
 *-distr-+ : (a b c : A) → a * (b + c) ≡ (a * b) + (a * c)
 ~~~
 
+
 Proofs can be used to rewrite terms
 -----------------------------------
 
@@ -773,24 +791,28 @@ module _ ⦃ F : Field A ⦄ where
 
 . . .
 
+\undovspacepause
 ```agda
     ≡⟨ *-1 (b + 0ᶠ) ⟩ -- *-1 : (a : A) → a * 1ᶠ ≡ a
 ```
 
 . . .
 
+\undovspacepause
 ```agda
     b + 0ᶠ
 ```
 
 . . .
 
+\undovspacepause
 ```agda
     ≡⟨ +-0 b ⟩ -- +-1 : (a : A) → a + 0ᶠ ≡ a
 ```
 
 . . .
 
+\undovspacepause
 ```agda
     b ∎
 ```
@@ -808,12 +830,14 @@ idₗ = record
 
 . . .
 
+\undovspacepause
 ```agda
   ; f[u+v]≡f[u]+f[v] = λ u v → refl -- id (u +ⱽ v) ≡ id u +ⱽ id v
 ```
 
 . . .
 
+\undovspacepause
 ```agda
   ; f[c*v]≡c*f[v] = λ c v → refl -- id (c ∘ⱽ v) ≡ c ∘ⱽ id v
   }
@@ -823,7 +847,7 @@ idₗ = record
 Proving that the `diag` function is linear
 ------------------------------------------
 
-Now let's try to define the `diag` fucntion as a linear function
+Now let's try to define the `diag` function as a linear function
 
 ```agda
 diagₗ : ⦃ F : Field A ⦄ → Vec A n → n ⊸ n
@@ -918,8 +942,8 @@ Does the transpose match?
 Say we defined a matrix as so
 
 ```agda
-_ : ⦃ F : Field A ⦄ → LinearMatrix n n
-_ = ConstructLinearMatrix (idₗ) (diagₗ (replicate 1ᶠ))
+Mₙₒ : ⦃ F : Field A ⦄ → LinearMatrix n n
+Mₙₒ = ConstructLinearMatrix (idₗ) (diagₗ (replicate 1ᶠ))
 ```
 
 <!--
@@ -933,6 +957,8 @@ _ = ConstructLinearMatrix (idₗ) (diagₗ (replicate 1ᶠ))
 
 We have mixed up the forward/transpose pairing between our two linear functions.
 
+\undovspacepause
+\undovspacepause
 $$
 \begin{aligned}
 I & = I^T\\
@@ -943,8 +969,10 @@ $$
 . . .
 
 To solve this problem, we can show that for forward function `M` and
-transpose function `M^T` that the following property holds.
+transpose function `Mᵀ` that the following property holds.
 
+\undovspacepause
+\undovspacepause
 $$
 \forall x y. \langle x , M y \rangle = \langle y , M^T x \rangle
 $$
@@ -1010,7 +1038,7 @@ What can we do with a matrix
 We can do a few things with a matrix:
 
 1. Multiply the matrix with a vector (matrix-vector multiply): $Mx$
-2. Transform the matrix to get a new matrix (tranpose): $M^Tx$
+2. Transform the matrix to get a new matrix (transpose): $M^Tx$
 3. Combine the matrix with other matrices (matrix-matrix multiply): $M_1 * M_2$
 
 . . .
@@ -1258,7 +1286,7 @@ step' γ M y x = x -ⱽ γ ∘ⱽ (M ᵀ · M · x -ⱽ M ᵀ · y)
 ```
 
 
-Proving the two `step`s are in lockstep
+Proving the two `step`s are in lock step
 ---------------------------------------
 
 We can prove that `step` and `step'` are the same by saying that when we
@@ -1284,37 +1312,77 @@ proof γ M y x = begin
 statement, and requires function extensionality.
 
 
-What have we shown?
--------------------
+Have we accomplished our goal?
+------------------------------
 
-Overview of what we accomplished.
+Our original goal was
 
+> Correct by construction linear algebra
 
-Compare contrast different approaches
--------------------------------------
+. . .
 
-Make a table?
+we certainly achieved that!
 
-- Python version (`List A → List A`) is really easy to get started with, many packages. Hard to pin down error in a larger algorithm.
-- Haskell version (`Vec A n → Vec A m`) convenient for making sure the basics are done, but can't guard against incorrect pairings.
-- Agda version protects against almost all errors one could make. At a high price though
+. . .
 
+::: incremental
 
-What is the ideal version?
---------------------------
+- Eliminated wrong size result bugs.
+- Eliminated non-linear function bugs.
+- Eliminated incorrect function pairing bugs.
 
-Probably Idris. Haskell version is more convenient than the Agda version but
-allows you to use a sane syntax.
-
-24 / 213
-11.3% code, everyting else is either a proof or type signature.
+:::
 
 
-Whats left?
------------
+Comparing the steps we went through
+-----------------------------------
 
-- We have defined everything on a Field
-- Positive semidefinite proof would be nice for quadratic programs.
+Through this process, we went through three different implementations of
+matrices as functions.
+
+::: incremental
+
+- Regular functions (Python: `PyOp` library)
+- Size-typed functions (Haskell: `convex` library)
+- Linear functions (Agda: `FLA` library)
+
+:::
+
+
+API comparison: how likely am I to use this?
+--------------------------------------------
+
+Not every library is a blast to use. How do the three data types we have
+compare?
+
+![](fig/api-base.pdf)
+
+
+API comparison: how likely am I to use this?
+--------------------------------------------
+
+Not every library is a blast to use. How do the three data types we have
+compare?
+
+![](fig/api-function.pdf)
+
+
+API comparison: how likely am I to use this?
+--------------------------------------------
+
+Not every library is a blast to use. How do the three data types we have
+compare?
+
+![](fig/api-sized.pdf)
+
+
+API comparison: how likely am I to use this?
+--------------------------------------------
+
+Not every library is a blast to use. How do the three data types we have
+compare?
+
+![](fig/api-linear.pdf)
 
 
 This presentation is a program!
@@ -1408,4 +1476,22 @@ Prove that the functions themselves, without the proofs, work
 Prove through UIP
 -----------------
 
+How hard is the API
+-------------------
+
+::: incremental
+
+- 213 lines of code
+- 24 of those lines defined the functions themselves (11.3%)
+- everything else is a proof, a type, or a control (import, etc) statement.
+
+:::
+
 -->
+
+<!--  LocalWords:  Hmm min infty bmatrix vcdice Vec clubsuit heartsuit circ
+ -->
+<!--  LocalWords:  spadesuit diamondsuit neq Mx Tx cdots vdots ddots diag
+ -->
+<!--  LocalWords:  LinearMatrix forall langle rangle textrm nabla
+ -->
