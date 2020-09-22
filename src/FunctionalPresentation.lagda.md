@@ -18,8 +18,8 @@ header-includes: |
 ---
 
 
-Goal: Correct by construction linear algebra
---------------------------------------------
+Goal: correct by construction matrices
+--------------------------------------
 
 <!--
 These comment blocks let me hide stuff! :-D I have to put this top one under
@@ -83,7 +83,7 @@ There are a few ways one can go wrong:
 
 . . .
 
-Plus a few more ways to make an error.
+Plus a few more surprising errors to get to later!
 
 . . .
 
@@ -131,6 +131,8 @@ data MatrixOfNumbers (A : Set) : Set where
 
 To encode the matrix
 
+\undovspacepause
+\undovspacepause
 $$
 M_n = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}
 $$
@@ -144,17 +146,23 @@ Mₙ : MatrixOfNumbers ℕ -- Natural numbers
 Mₙ = ConstructMatrixOfNumbers [ [ 1 , 2 , 3 ] , [ 4 , 5 , 6 ] ]
 ```
 
+. . .
 
-What can we do with a matrix
-----------------------------
+Conventions used in this talk : `A` is a type, $M_{i}$ is a matrix, `m n p
+q` are natural numbers, and `u v x y` are vectors.
 
-We can do a few things with a matrix:
+
+
+What can we do with a matrix?
+-----------------------------
+
+A matrix can be used in a few different cases:
 
 ::: incremental
 
 1. Multiply a matrix with a vector (matrix-vector multiply): $Mx$
 2. Transform a matrix to get a new matrix (transpose): $M^Tx$
-3. Combine a matrix with other matrices (matrix-matrix multiply): $M_1 * M_2$
+3. Combine matrices (matrix-matrix multiply): $M_1 * M_2$
 
 :::
 
@@ -162,7 +170,7 @@ We can do a few things with a matrix:
 What is matrix-vector multiplication?
 -------------------------------------
 
-The matrix-vector multiply transforms one vector into another through
+Matrix-vector multiply transforms one vector into another through
 multiplication and addition.
 
 $$
@@ -247,8 +255,8 @@ diag u = λ v → zipWith _ (_*_) u v
 ~~~
 
 
-Let's define a matrix as a function then!
------------------------------------------
+Let's define a matrix as a function!
+------------------------------------
 
 We can define a matrix as just a function then that takes a vector and
 returns a new one.
@@ -260,8 +268,32 @@ data FunctionalMatrix (A : Set) : Set where
 
 . . .
 
-We will also define this helper function to apply a `FunctionalMatrix`
-directly to an argument.
+Now we can construct the identity matrix as follows:
+
+```agda
+Mᵢ : FunctionalMatrix A
+Mᵢ = ConstructFunctionalMatrix (list-identity)
+```
+
+. . .
+
+This addresses the matrix-vector ability of a matrix, what else can we
+tackle functionally?
+
+
+We have matrix-vector multiply down, can we do more?
+----------------------------------------------------
+
+With our functional definition of a matrix, we can do other operations like
+matrix-matrix multiply.
+
+\undovspacepause
+\undovspacepause
+$$
+(M_1 * M_2) v = M_1(M_2(v))
+$$
+
+. . .
 
 ```agda
 _·ᶠ_ : FunctionalMatrix A → List A → List A
@@ -274,26 +306,14 @@ infixr 10 _·ᶠ_
 ```
 -->
 
+
 . . .
 
-Now we can construct the identity matrix as follows:
-
-```agda
-Mᵢ : (A : Set) → FunctionalMatrix A
-Mᵢ A = ConstructFunctionalMatrix (list-identity)
-```
-
-
-We have matrix-vector multiply down, can we do more?
-----------------------------------------------------
-
-With our functional definition of a matrix, we can do other operations like
-matrix-matrix multiply.
-
+\vspace{-0.5em}
 ```agda
 apply_two_matrices : FunctionalMatrix A → FunctionalMatrix A
                    → List A → List A
-apply_two_matrices F G v = F ·ᶠ G ·ᶠ v
+apply_two_matrices M₁ M₂ v = M₁ ·ᶠ M₂ ·ᶠ v
 ```
 
 . . .
@@ -302,7 +322,7 @@ Hmm that looks a lot like composition:
 
 ```agda
 _∘ᶠ_ : FunctionalMatrix A → FunctionalMatrix A → FunctionalMatrix A
-F ∘ᶠ G = ConstructFunctionalMatrix (apply_two_matrices F G)
+M₁ ∘ᶠ M₂ = ConstructFunctionalMatrix (apply_two_matrices M₁ M₂)
 ```
 
 
@@ -325,8 +345,8 @@ We can now define the identity matrix with the transpose matrix function,
 which is also the identity.
 
 ```agda
-Mᵢ,ₜ : (A : Set) → FunctionalMatrixWithTranpose A
-Mᵢ,ₜ A = ConstructFMT (list-identity) (list-identity)
+Mᵢ,ₜ : FunctionalMatrixWithTranpose A
+Mᵢ,ₜ = ConstructFMT (list-identity) (list-identity)
 ```
 
 
@@ -377,7 +397,7 @@ class Matrix:
 ---------------------------  ------  -----------  -----------
 Space                        150 GB     bytes       $10^9x$
 Time                         60 min     2 min        $30x$
-Use of functional concepts     No        Yes       $\infty x$
+Use of functional concepts     No        Yes       Priceless
 
 
 Intuition check : convert a functional matrix into a number matrix
@@ -396,7 +416,7 @@ identity' v = v
 
 . . .
 
-Could be written as
+could be written as
 
 ~~~agda
 identity' : List A → List A
@@ -434,7 +454,7 @@ Hmm, intuition check: can we write `Mᵣ` as a matrix of numbers?
 . . .
 
 $$
-M_r = \begin{bmatrix} \vcdice{1} & \vcdice{2} \\ \vcdice{3} & \vcdice{4} \end{bmatrix}
+m_r = \begin{bmatrix} \vcdice{1} & \vcdice{2} \\ \vcdice{3} & \vcdice{4} \end{bmatrix}
 $$
 
 If we could convert a random number generator to a number, sure! `:-(`
@@ -469,11 +489,11 @@ v₂ = v
 muddled in most dependently typed languages.
 
 
-Use functions on Vec to ensure that the shapes of the data match
-----------------------------------------------------------------
+Use functions on Vec to ensure that the shapes match
+----------------------------------------------------
 
-Sweet, so we can remove the runtime checks from the prior implementation in
-the matrix type!
+Now we can make a matrix type where the length of the inputs always match
+up.
 
 ```agda
 data SizedMatrix (A : Set) (m n : ℕ) : Set where
@@ -481,6 +501,8 @@ data SizedMatrix (A : Set) (m n : ℕ) : Set where
                          → (Vec A m → Vec A n) -- Transpose function
                          → SizedMatrix A m n
 ```
+
+Previously this would be done with a runtime check.
 
 . . .
 
@@ -495,11 +517,11 @@ data SizedMatrix (A :: *) (m :: Nat) (n :: Nat) where
 ```
 
 
-Use functions on Vec to ensure that the shapes of the data match
-----------------------------------------------------------------
+Use functions on Vec to ensure that the shapes match
+----------------------------------------------------
 
-Sweet, so we can remove the runtime checks from the prior implementation in
-the matrix type!
+Now we can make a matrix type where the length of the inputs always match
+up.
 
 ~~~agda
 data SizedMatrix (A : Set) (m n : ℕ) : Set where
@@ -518,7 +540,7 @@ id : (A : Set) → A → A
 
 ```agda
 Mᵢ,ₛ : SizedMatrix A n n
-Mᵢ,ₛ = ConstructSizedMatrix id id
+Mᵢ,ₛ = ConstructSizedMatrix id id -- id : Vec A n → Vec A n
 ```
 
 
@@ -558,7 +580,7 @@ Matrices are defined over fields
 
 To check our intuition we have been trying to determine if our function
 could be written using multiplication and addition. Formally, this is
-equivalent to the matrices containing elements of a _Field_.
+equivalent to saying the elements of a matrix are from a _Field_.
 
 . . .
 
@@ -584,8 +606,8 @@ record Field (A : Set) : Set where
 ~~~
 
 
-Matrices that operate on fields only
-------------------------------------
+We can define matrices that operate on Fields only
+--------------------------------------------------
 
 Now we can restrict our `A` type to having a defined version of `+` and `*`.
 
@@ -597,6 +619,29 @@ data SizedFieldMatrix (A : Set) ⦃ F : Field A ⦄ (m n : ℕ) : Set where
 ```
 
 . . .
+
+in Haskell this would be written as
+
+```haskell
+data SizedFieldMatrix A (m :: Nat) (n :: Nat) where
+    ConstructSizedFieldMatrix :: (KnownNat m, KnownNat n, Field A)
+                              => (Vec A n → Vec A m) -- Forward function
+                              -> (Vec A m → Vec A n) -- Transpose function
+                              -> SizedFieldMatrix A m n
+```
+
+
+We can define matrices that operate on Fields only
+--------------------------------------------------
+
+Now we can restrict our `A` type to having a defined version of `+` and `*`.
+
+~~~agda
+data SizedFieldMatrix (A : Set) ⦃ F : Field A ⦄ (m n : ℕ) : Set where
+    ConstructSizedFieldMatrix :  (Vec A n → Vec A m) -- Forward function
+                              → (Vec A m → Vec A n) -- Transpose function
+                              → SizedFieldMatrix A m n
+~~~
 
 The card example can no longer be constructed, but the identity matrix still
 can be constructed.
@@ -676,7 +721,7 @@ record _⊸_ {A : Set} ⦃ F : Field A ⦄ (m n : ℕ) : Set where
 
 . . .
 
-with this we could define our matrices as using linear functions.
+with this we could define our matrices using linear functions.
 
 ```agda
 data LinearMatrix {A : Set} ⦃ F : Field A ⦄ (m n : ℕ) : Set where
@@ -820,12 +865,12 @@ module _ ⦃ F : Field A ⦄ where
 Proving that the identity function is linear
 --------------------------------------------
 
-The identity function is simple
+The linear identity function is simple
 
 ```agda
 idₗ : ⦃ F : Field A ⦄ → n ⊸ n
 idₗ = record
-  { f = id
+  { f = id -- Vec A n → Vec A n
 ```
 
 . . .
@@ -974,7 +1019,10 @@ transpose function `Mᵀ` that the following property holds.
 \undovspacepause
 \undovspacepause
 $$
-\forall x y. \langle x , M y \rangle = \langle y , M^T x \rangle
+\begin{gathered}
+\forall x y. \langle x , M y \rangle = \langle y , M^T x \rangle \\
+\langle a , b \rangle = \textrm{sum}(a *^V b) = \sum_i^n a_i * b_i
+\end{gathered}
 $$
 
 
@@ -1039,7 +1087,7 @@ We can do a few things with a matrix:
 
 1. Multiply the matrix with a vector (matrix-vector multiply): $Mx$
 2. Transform the matrix to get a new matrix (transpose): $M^Tx$
-3. Combine the matrix with other matrices (matrix-matrix multiply): $M_1 * M_2$
+3. Combine matrices (matrix-matrix multiply): $M_1 * M_2$
 
 . . .
 
@@ -1099,7 +1147,7 @@ linear functions.
 Matrix-matrix multiply toolbox
 ------------------------------
 
-We are doing to need a few functions to get there. One to extract the
+We are going to need a few functions to get there. One to extract the
 linear functions.
 
 ```agda
@@ -1127,6 +1175,7 @@ g ∘ˡ h = record {
 
 . . .
 
+\undovspacepause
 ```agda
   ; f[u+v]≡f[u]+f[v] = TrustMe!
   ; f[c*v]≡c*f[v] = TrustMe! }
@@ -1194,7 +1243,9 @@ Algorithms using Linear Algebra
 Solving linear equations finds what input produces an observed result
 ---------------------------------------------------------------------
 
-Say we want to determine the best .
+Say we want to determine how strong some base factors ($x = [\textrm{age},
+\textrm{height}, \cdots]$) contribute to how badly COVID-19 affects a patient
+($y$, list of patients), given a model of the disease $M$.
 
 $$
 M x = y
@@ -1414,9 +1465,30 @@ Appendix
 Instructions for how to run this presentation in Agda
 -----------------------------------------------------
 
-1. Get Nix
-2. Be happy!
+If you have the [Nix][nix] package manager installed, you can run
 
+~~~
+nix-shell
+~~~
+
+at the root of this presentation's repo and then launch emacs
+
+~~~
+emacs src/FunctionalPresentation.lagda.md
+~~~
+
+More information on the Agda emacs mode can be found
+[https://agda.readthedocs.io/en/v2.6.1.1/tools/emacs-mode.html][agda-emacs-mode]. If you use [Spacemacs][spacemacs], the
+documentation for its Agda mode is [https://www.spacemacs.org/layers/+lang/agda/README.html][spacemacs-agda-mode].
+
+
+<!-- References -->
+
+[FLA]: https://github.com/ryanorendorff/functional-linear-algebra
+[nix]: https://nixos.org
+[agda-emacs-mode]: https://agda.readthedocs.io/en/v2.6.1.1/tools/emacs-mode.html
+[spacemacs]: https://www.spacemacs.org/
+[spacemacs-agda-mode]: https://www.spacemacs.org/layers/+lang/agda/README.html
 
 <!--
 
