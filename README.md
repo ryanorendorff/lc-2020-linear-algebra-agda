@@ -46,6 +46,13 @@ More information on the Agda emacs mode can be found
 documentation for its Agda mode is [here][spacemacs-agda-mode].
 
 
+How to build the presentation
+-----------------------------
+
+```
+nix-build presentation.nix
+```
+
 <!-- References -->
 
 [FLA]: https://github.com/ryanorendorff/functional-linear-algebra
