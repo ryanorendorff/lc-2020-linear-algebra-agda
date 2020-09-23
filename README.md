@@ -2,6 +2,7 @@ Formalizing Linear Algebra Algorithms using Dependently Typed Functional Program
 ====================================================================================
 
 [![Presentation Type Checks](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/Presentation%20Type%20Checks/badge.svg)][agda-literate-mode]
+![Presentation PDF](https://github.com/ryanorendorff/lc-2020-linear-algebra-agda/workflows/Presentation%20PDF/badge.svg)
 
 This is a presentation about the Agda library
 [functional-linear-algebra][FLA], which formalizes the matrix-free
