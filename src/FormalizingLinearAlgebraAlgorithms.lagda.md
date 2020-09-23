@@ -570,7 +570,7 @@ We could write a matrix for handling playing cards.
 ```agda
 data Card : Set where
   ♠ ♣ ♥ ♢ : Card
-```agda`
+```
 
 . . .
 
