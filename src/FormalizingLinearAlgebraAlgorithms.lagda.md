@@ -8,12 +8,17 @@ header-includes: |
   \definecolor{BerkeleyBlue}{RGB}{0,50,98}
   \definecolor{FoundersRock}{RGB}{59,126,161}
   \definecolor{Medalist}{RGB}{196,130,14}
+
   \setbeamercolor{frametitle}{fg=white,bg=FoundersRock}
   \setbeamercolor{title separator}{fg=Medalist,bg=white}
+
+  \usepackage{fontspec}
+  \setmonofont{Iosevka}
   \usefonttheme[onlymath]{serif}
-  \setmonofont[Contextuals={Alternate}]{PragmataPro Liga}
+
   \usepackage{epsdice}
   \newcommand\vcdice[1]{\vcenter{\hbox{\epsdice{#1}}}}
+
   \newcommand{\undovspacepause}{\vspace*{-0.9em}}
 ---
 
@@ -46,6 +51,8 @@ open import FLA.Data.Vec.Properties
 
 module FormalizingLinearAlgebraAlgorithms where
 
+-- These are common variables we will be using in the presentation. This way
+-- we don't have to write (A : Set) → ... in every type signature.
 variable
   A B C : Set
   m n p q : ℕ
@@ -334,7 +341,7 @@ need the transpose as well.
 
 ```agda
 data FunctionalMatrixWithTranpose (A : Set) : Set where
-    ConstructFMT : (List A → List A) -- Forward function
+    ConstructFMT :  (List A → List A) -- Forward function
                  → (List A → List A) -- Transpose function
                  → FunctionalMatrixWithTranpose A
 ```
@@ -461,7 +468,7 @@ Hmm, intuition check: can we write `Mᵣ` as a matrix of numbers?
 
 \undovspacepause
 $$
-m_r = \begin{bmatrix} \vcdice{1} & \vcdice{2} \\ \vcdice{3} & \vcdice{4} \end{bmatrix}
+M_r = \begin{bmatrix} \vcdice{1} & \vcdice{2} \\ \vcdice{3} & \vcdice{4} \end{bmatrix}
 $$
 
 If we could convert a random number generator to a number, sure! `:-(`
@@ -530,7 +537,7 @@ We can define a matrix type where the shapes are preserved.
 
 ~~~agda
 data SizedMatrix (A : Set) (m n : ℕ) : Set where
-    ConstructSizedMatrix : (Vec A n → Vec A m) -- Forward function
+    ConstructSizedMatrix :  (Vec A n → Vec A m) -- Forward function
                          → (Vec A m → Vec A n) -- Transpose function
                          → SizedMatrix A m n
 ~~~
@@ -563,7 +570,8 @@ We could write a matrix for handling playing cards.
 ```agda
 data Card : Set where
   ♠ ♣ ♥ ♢ : Card
-```
+```agda`
+
 . . .
 
 ```agda
@@ -626,9 +634,9 @@ Now we can restrict our `A` type to having a defined version of `+` and `*`.
 
 ```agda
 data SizedFieldMatrix (A : Set) ⦃ F : Field A ⦄ (m n : ℕ) : Set where
-    ConstructSizedFieldMatrix :  (Vec A n → Vec A m) -- Forward function
-                              → (Vec A m → Vec A n) -- Transpose function
-                              → SizedFieldMatrix A m n
+    ConstructSFM :  (Vec A n → Vec A m) -- Forward function
+                 → (Vec A m → Vec A n) -- Transpose function
+                 → SizedFieldMatrix A m n
 ```
 
 . . .
@@ -637,10 +645,10 @@ in Haskell this would be written as
 
 ```haskell
 data SizedFieldMatrix A (m :: Nat) (n :: Nat) where
-    ConstructSizedFieldMatrix :: (KnownNat m, KnownNat n, Field A)
-                              => (Vec A n → Vec A m) -- Forward function
-                              -> (Vec A m → Vec A n) -- Transpose function
-                              -> SizedFieldMatrix A m n
+    ConstructSFM :: (KnownNat m, KnownNat n, Field A)
+                 => (Vec A n → Vec A m) -- Forward function
+                 -> (Vec A m → Vec A n) -- Transpose function
+                 -> SizedFieldMatrix A m n
 ```
 
 
@@ -651,9 +659,9 @@ Now we can restrict our `A` type to having a defined version of `+` and `*`.
 
 ~~~agda
 data SizedFieldMatrix (A : Set) ⦃ F : Field A ⦄ (m n : ℕ) : Set where
-    ConstructSizedFieldMatrix :  (Vec A n → Vec A m) -- Forward function
-                              → (Vec A m → Vec A n) -- Transpose function
-                              → SizedFieldMatrix A m n
+    ConstructSFM :  (Vec A n → Vec A m) -- Forward function
+                 → (Vec A m → Vec A n) -- Transpose function
+                 → SizedFieldMatrix A m n
 ~~~
 
 The card example can no longer be constructed, but the identity matrix still
@@ -662,7 +670,7 @@ can be constructed.
 ```agda
 -- + and * must be defined on A
 Mₛᶠᵢ : ⦃ F : Field A ⦄ → SizedFieldMatrix A n n
-Mₛᶠᵢ = ConstructSizedFieldMatrix id id
+Mₛᶠᵢ = ConstructSFM id id
 ```
 . . .
 
@@ -686,7 +694,7 @@ Currently we could define a matrix like so, which has neither property.
 
 ```agda
 _ : ⦃ F : Field A ⦄ → SizedFieldMatrix A n n
-_ = ConstructSizedFieldMatrix (λ v → replicate 1ᶠ) (λ v → replicate 1ᶠ)
+_ = ConstructSFM (λ v → replicate 1ᶠ) (λ v → replicate 1ᶠ)
 ```
 
 <!--

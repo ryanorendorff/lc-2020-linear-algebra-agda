@@ -5,8 +5,8 @@
 { lib, stdenv, mkDerivation, standard-library, fla }:
 
 mkDerivation {
-  version = "0.1";
-  pname = "lc-2020";
+  version = "1.0";
+  pname = "FormalizingLinearAlgebraAlgorithms";
 
   buildInputs = [ standard-library fla ];
 
