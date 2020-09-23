@@ -1,7 +1,8 @@
 name: "Presentation PDF"
 on:
-  pull_request:
   push:
+    branches:
+      - master
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -14,3 +15,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./result
+        force_orphan: true
