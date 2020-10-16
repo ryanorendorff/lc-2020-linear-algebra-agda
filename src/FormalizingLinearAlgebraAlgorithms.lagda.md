@@ -1117,13 +1117,6 @@ new definition?
 
 <!--
 ```agda
-_-ⱽ_ : ⦃ F : Field A ⦄ → Vec A n → Vec A n → Vec A n
-x -ⱽ y = x +ⱽ (map (-_) y)
-  where
-    open Field {{...}}
-
-infixl 6 _-ⱽ_
-
 iterate : ℕ → A → (A → A) → List A
 iterate 0 x f = x ∷ []
 iterate (suc n) x f = x ∷ iterate n (f x) f

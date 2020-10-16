@@ -1,5 +1,6 @@
+# nixpkgs unstable channel from October 15th, 2020
 import (builtins.fetchTarball {
   url =
-    "https://github.com/NixOS/nixpkgs-channels/archive/32b46dd897ab2143a609988a04d87452f0bbef59.tar.gz";
-  sha256 = "1gzfrpjnr1bz9zljsyg3a4zrhk8r927sz761mrgcg56dwinkhpjk";
+    "https://github.com/NixOS/nixpkgs/archive/dfd0a64c1a25150092e1e6200fdc59da309466e5.tar.gz";
+  sha256 = "1aadmhqd4d02kp7gk5r83r0p8d6n9qj1w7xlh0argi09msvamjcw";
 }) { }

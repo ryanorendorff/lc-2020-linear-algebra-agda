@@ -2,13 +2,13 @@
 # `agdaPackages.callPackage`, which is where the `standard-library` input comes
 # from.
 
-{ lib, stdenv, mkDerivation, standard-library, fla }:
+{ lib, stdenv, mkDerivation, standard-library, functional-linear-algebra }:
 
 mkDerivation {
   version = "1.0";
   pname = "FormalizingLinearAlgebraAlgorithms";
 
-  buildInputs = [ standard-library fla ];
+  buildInputs = [ standard-library functional-linear-algebra ];
 
   src = lib.sourceFilesBySuffices ./. [
     ".agda"
