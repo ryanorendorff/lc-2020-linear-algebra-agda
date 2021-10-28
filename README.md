@@ -1,3 +1,5 @@
+# Archived. See [the repository for all variants of the talk on github](https://github.com/ryanorendorff/functional-linear-algebra-talk).
+
 Formalizing Linear Algebra Algorithms using Dependently Typed Functional Programming
 ====================================================================================
 
